@@ -1,0 +1,8 @@
+POST http://localhost:5002/bms/sync
+Content-Type: application/json
+
+###
+GET http://localhost:5002/bms/list
+Content-Type: application/json
+
+###

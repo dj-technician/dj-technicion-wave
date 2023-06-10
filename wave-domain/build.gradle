@@ -1,0 +1,14 @@
+jar {
+    enabled = true
+    archivesBaseName = 'wave-domain'
+    archiveVersion = '0.0.1-SNAPSHOT'
+}
+
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    api project(':wave-common')
+    implementation 'org.projectlombok:lombok:1.18.20'
+}

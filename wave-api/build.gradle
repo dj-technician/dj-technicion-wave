@@ -1,0 +1,14 @@
+jar {
+    enabled = true
+    archivesBaseName = 'wave-api'
+    archiveVersion = '0.0.1-SNAPSHOT'
+}
+
+bootJar {
+    enabled = true
+}
+
+dependencies {
+    api project(':wave-common')
+    api project(':wave-domain')
+}

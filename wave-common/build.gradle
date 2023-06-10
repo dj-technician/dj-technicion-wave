@@ -1,0 +1,9 @@
+jar {
+    enabled = true
+    archivesBaseName = 'wave-common'
+    archiveVersion = '0.0.1-SNAPSHOT'
+}
+
+bootJar {
+    enabled = false
+}

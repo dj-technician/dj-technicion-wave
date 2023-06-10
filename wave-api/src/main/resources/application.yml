@@ -1,0 +1,68 @@
+spring:
+  profiles:
+    group:
+      "local": "local, common"
+      "dev": "devlocal, common"
+      "real": "prod, common"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "common"
+
+  jpa:
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: true
+  output:
+    ansi:
+      enabled: always
+
+server:
+  port: ${http.port:5002}
+  tomcat:
+    protocol: org.apache.coyote.http11.Http11Protocol
+    maxThreads: 200
+    maxConnections: 10000
+    acceptCount: 100
+    maxKeepAliveRequests: 100
+    connectionTimeout: 60000
+    enableLookups: false
+    tcpNoDelay: true
+    compression: off
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "local"
+  devtools:
+    livereload:
+      enabled: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:43306/wave?useSSL=false&serverTimezone=UTC&connectTimeout=5000&allowPublicKeyRetrieval=true
+    username: root
+    password: develop
+
+logging:
+  level:
+    root: debug
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "dev"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "real"

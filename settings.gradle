@@ -1,0 +1,5 @@
+rootProject.name = 'wave'
+include 'wave-api'
+include 'wave-common'
+include 'wave-game'
+include 'wave-domain'
