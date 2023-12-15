@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ## check /docker directory
 ####################################################
@@ -18,6 +18,9 @@ if [ -d "$MYSQL_DIR" ]; then
 else
   echo "mkdir new /docker/mysql directory"
   mkdir "docker/mysql"
+  mkdir "docker/mysql/data"
+  mkdir "docker/mysql/init"
+  cp db/ddl.sql docker/mysql/init/ddl.sql
 fi
 
 #REDIS_DIR="$DOCKER_DIR/redis"
@@ -43,12 +46,12 @@ echo ${containerExists}
 
 if [ -z "${containerExists}" ]; then
   echo "${DOCKER_NAME} container is empty, running new container..."
-  docker run --name $DOCKER_NAME -p $PORT:3306 -v `pwd`/docker/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD -d mysql:8
+  docker run --name $DOCKER_NAME -p $PORT:3306 -v `pwd`/docker/mysql/data:/var/lib/mysql -v `pwd`/docker/mysql/init:/docker-entrypoint-initdb.d -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD -d mysql:8
   exit 1
 fi
 
 echo "${DOCKER_NAME} container is already exists, restarting container..."
-docker stop $DOCKER_NAME
+docker stop ${DOCKER_NAME}
 docker start ${DOCKER_NAME}
 ## init mysql container finished
 ####################################################
