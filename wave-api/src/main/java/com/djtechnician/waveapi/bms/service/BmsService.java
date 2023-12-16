@@ -20,7 +20,7 @@ public class BmsService {
       return BmsHeader.fromInfo(getHeaderSection(bms));
     } catch (Exception e) {
       e.printStackTrace();
-      log.warn("unable to parse: ", bms.substring(0, 50));
+      log.warn("unable to parse: {}", bms.substring(0, 50));
       throw new RuntimeException();
     }
   }
@@ -32,7 +32,7 @@ public class BmsService {
       return Bms.parse(headerSection, dataSection);
     } catch (Exception e) {
       e.printStackTrace();
-      log.warn("unable to parse: ", bms.substring(0, 50));
+      log.warn("unable to parse: {}", bms.substring(0, 50));
       throw new RuntimeException();
     }
   }

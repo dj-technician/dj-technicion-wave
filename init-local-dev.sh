@@ -13,6 +13,7 @@ else
 fi
 
 MYSQL_DIR="$DOCKER_DIR/mysql"
+initialize=false
 if [ -d "$MYSQL_DIR" ]; then
   echo "/docker/mysql directory is already exists!"
 else
@@ -21,6 +22,7 @@ else
   mkdir "docker/mysql/data"
   mkdir "docker/mysql/init"
   cp db/ddl.sql docker/mysql/init/ddl.sql
+  initialize=true
 fi
 
 #REDIS_DIR="$DOCKER_DIR/redis"
@@ -44,14 +46,20 @@ containerExists=$(docker ps -a | grep ${DOCKER_NAME})
  
 echo ${containerExists}
 
-if [ -z "${containerExists}" ]; then
-  echo "${DOCKER_NAME} container is empty, running new container..."
-  docker run --name $DOCKER_NAME -p $PORT:3306 -v `pwd`/docker/mysql/data:/var/lib/mysql -v `pwd`/docker/mysql/init:/docker-entrypoint-initdb.d -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD -d mysql:8
-  exit 1
+if [ -n "${containerExists}" ]; then
+  echo "${DOCKER_NAME} container is already exists, removing container..."
+  docker stop ${DOCKER_NAME}
+  docker rm ${DOCKER_NAME}  
 fi
 
-echo "${DOCKER_NAME} container is already exists, restarting container..."
-docker stop ${DOCKER_NAME}
-docker start ${DOCKER_NAME}
+
+echo "${DOCKER_NAME} : running new container..."
+volumeOpt="-v `pwd`/docker/mysql/data:/var/lib/mysql"
+initializeOpt=" -v `pwd`/docker/mysql/init:/docker-entrypoint-initdb.d"
+if [ "$initialize" = true ]; then
+  volumeOpt="$volumOpt $initializeOpt"
+fi
+docker run --name $DOCKER_NAME -p $PORT:3306 $volumeOpt -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD -d mysql:8
+
 ## init mysql container finished
 ####################################################

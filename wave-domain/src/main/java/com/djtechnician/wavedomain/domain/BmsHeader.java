@@ -61,7 +61,7 @@ public class BmsHeader {
     String line;
     boolean isRead = false;
     List<BmsData> bmsData = new ArrayList<>();
-    Integer random = -1;
+    int random = -1;
     // set random
     while ((line = randomReader.readLine()) != null) {
       if (!line.startsWith("#")) {
@@ -165,7 +165,7 @@ public class BmsHeader {
         break;
       default:
         if (parseWav) {
-          setWav(key, value);
+          setWav(key, value.toLowerCase());
           setBpm(key, value);
           setStop(key, value);
         }

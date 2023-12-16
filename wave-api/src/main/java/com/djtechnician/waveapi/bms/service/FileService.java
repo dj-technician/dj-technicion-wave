@@ -1,6 +1,8 @@
 package com.djtechnician.waveapi.bms.service;
 
 import com.djtechnician.waveapi.bms.response.BmsHeaderResponse;
+import com.djtechnician.waveapi.bms.response.BmsResponse;
+import com.djtechnician.wavedomain.domain.Bms;
 import com.djtechnician.wavedomain.domain.BmsHeader;
 import com.djtechnician.wavedomain.entity.BmsNode;
 import com.djtechnician.wavedomain.repository.BmsNodeRepository;
@@ -9,6 +11,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -105,12 +110,9 @@ public class FileService {
   }
 
   public String getBms01Path(Long nodeId) {
-    BmsNode bmsNode =
-        bmsNodeRepository
-            .findById(nodeId)
-            .orElseThrow(() -> new RuntimeException("nodeId 에 해당하는 bms 를 찾을 수 없습니다. : " + nodeId));
-
     try {
+      BmsNode bmsNode = findBmsByNodeId(nodeId);
+
       String bms = read(new File(bmsNode.fullPath()));
       BmsHeader bmsHeader = bmsService.parseHeaderInfo(bms);
 
@@ -124,13 +126,41 @@ public class FileService {
     }
   }
 
-  public void parseBms(Long nodeId) {
-    BmsNode bmsNode =
-        bmsNodeRepository
-            .findById(nodeId)
-            .orElseThrow(() -> new RuntimeException("nodeId 에 해당하는 bms 를 찾을 수 없습니다. : " + nodeId));
+  public BmsResponse parseBms(Long nodeId) {
+    try {
+      BmsNode bmsNode = findBmsByNodeId(nodeId);
 
-    String bms = readBms(bmsNode);
-    bmsService.parse(bms);
+      String bmsStr = readBms(bmsNode);
+      Bms bms = bmsService.parse(bmsStr);
+      return BmsResponse.builder().isParsed(true).bms(bms).build();
+    } catch (Exception e) {
+      return BmsResponse.builder().isParsed(false).build();
+    }
+  }
+
+  public String getAvailableSoundPath(Long nodeId, String fileName) {
+    BmsNode bmsNode = findBmsByNodeId(nodeId);
+    Path soundPath = Paths.get(bmsNode.rootPath(), fileName);
+    boolean found = Files.exists(soundPath);
+    if (found) {
+      return soundPath.toString();
+    }
+
+    for (String extension : Bms.SOUND_EXTENSIONS) {
+      String anotherName = fileName.split("\\.")[0] + "." + extension;
+      soundPath = Paths.get(bmsNode.rootPath(), anotherName);
+      found = Files.exists(soundPath);
+      if (found) {
+        return soundPath.toString();
+      }
+    }
+
+    throw new RuntimeException("해당 fileName 의 사운드 파일을 찾을 수 없습니다. : " + fileName);
+  }
+
+  private BmsNode findBmsByNodeId(Long nodeId) {
+    return bmsNodeRepository
+        .findById(nodeId)
+        .orElseThrow(() -> new RuntimeException("nodeId 에 해당하는 bms 를 찾을 수 없습니다. : " + nodeId));
   }
 }

@@ -1,8 +1,9 @@
 package com.djtechnician.waveapi.bms.controller;
 
 import com.djtechnician.waveapi.bms.response.BmsHeaderResponse;
-import com.djtechnician.wavecommon.response.WaveResponse;
+import com.djtechnician.waveapi.bms.response.BmsResponse;
 import com.djtechnician.waveapi.bms.service.FileService;
+import com.djtechnician.wavecommon.response.WaveResponse;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -37,9 +38,9 @@ public class FileController {
   }
 
   @GetMapping("/{nodeId}")
-  public WaveResponse<?> parseBms(@PathVariable @NotNull Long nodeId) {
-    fileService.parseBms(nodeId);
-
-    return WaveResponse.success();
+  public WaveResponse<BmsResponse> parseBms(@PathVariable @NotNull Long nodeId) {
+    BmsResponse response = fileService.parseBms(nodeId);
+    log.info(response.toString());
+    return WaveResponse.success(response);
   }
 }

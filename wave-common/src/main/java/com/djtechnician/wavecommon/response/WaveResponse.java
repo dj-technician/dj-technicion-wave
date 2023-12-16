@@ -35,17 +35,17 @@ public class WaveResponse<T> extends ResponseEntity<T> {
     super(body, headers, rawStatus);
   }
 
-  public static WaveResponse success() {
-    return new WaveResponse(HttpStatus.OK);
+  public static WaveResponse<Void> success() {
+    return new WaveResponse<>(HttpStatus.OK);
   }
 
   public static <T> WaveResponse<T> success(T body) {
-    return new WaveResponse(body, HttpStatus.OK);
+    return new WaveResponse<>(body, HttpStatus.OK);
   }
 
   public static WaveResponse<Resource> download(Resource resource, String fileName) {
     HttpHeaders headers = new HttpHeaders();
     headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
-    return new WaveResponse(resource, headers, HttpStatus.OK);
+    return new WaveResponse<>(resource, headers, HttpStatus.OK);
   }
 }

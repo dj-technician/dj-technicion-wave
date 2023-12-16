@@ -3,6 +3,7 @@ package com.djtechnician.waveapi.bms.controller;
 import com.djtechnician.waveapi.bms.service.FileDownloadService;
 import com.djtechnician.waveapi.bms.service.FileService;
 import com.djtechnician.wavecommon.response.WaveResponse;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -26,7 +27,15 @@ public class FileDownloadController {
   public WaveResponse<Resource> downloadBmp01(@PathVariable Long nodeId) {
     String path = fileService.getBms01Path(nodeId);
     Resource resource = fileDownloadService.loadFileAsResource(path);
-    String extension = resource.getFilename().split("\\.")[1];
+    String extension = Objects.requireNonNull(resource.getFilename()).split("\\.")[1];
     return WaveResponse.download(resource, nodeId + "." + extension);
+  }
+
+  @GetMapping("/sound/{nodeId}/{fileName}")
+  public WaveResponse<Resource> downloadWav(
+      @PathVariable Long nodeId, @PathVariable String fileName) {
+    String path = fileService.getAvailableSoundPath(nodeId, fileName);
+    Resource resource = fileDownloadService.loadFileAsResource(path);
+    return WaveResponse.download(resource, resource.getFilename());
   }
 }
