@@ -1,6 +1,16 @@
 package com.djtechnician.wavecommon.utils;
 
 public class WaveUtils {
+
+  public static Integer base16ToDecimal(String base16) {
+    try{
+      return Integer.parseInt(base16, 16);
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException("Error to parse base16toDecimal : " + base16);
+    }
+  }
+
   public static Integer base36ToDecimal(String base36) {
     try {
       if (base36.length() != 2) {
@@ -28,7 +38,7 @@ public class WaveUtils {
       return firstNum + secondNum * 36;
     } catch (Exception e) {
       e.printStackTrace();
-      throw new RuntimeException("Error to parse base36toDecimal");
+      throw new RuntimeException("Error to parse base36toDecimal : " + base36);
     }
   }
 }

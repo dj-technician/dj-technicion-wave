@@ -64,8 +64,12 @@ public class BmsData {
     return IntStream.range(0, total)
         .mapToObj(
             i -> {
-              Integer value =
-                  WaveUtils.base36ToDecimal(finalParseValue.substring(i * 2, (i + 1) * 2));
+              Integer value;
+              if (BmsChannel.BPM == bmsChannel) { // bpm 채널은 16진수
+                value = WaveUtils.base16ToDecimal(finalParseValue.substring(i * 2, (i + 1) * 2));
+              } else {
+                value = WaveUtils.base36ToDecimal(finalParseValue.substring(i * 2, (i + 1) * 2));
+              }
               if (value == 0) {
                 return null;
               }
