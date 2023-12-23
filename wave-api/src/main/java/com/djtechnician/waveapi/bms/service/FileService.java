@@ -147,7 +147,8 @@ public class FileService {
     }
 
     for (String extension : Bms.SOUND_EXTENSIONS) {
-      String anotherName = fileName.split("\\.")[0] + "." + extension;
+      int extDotIndex = fileName.lastIndexOf(".");
+      String anotherName = fileName.substring(0, extDotIndex) + "." + extension;
       soundPath = Paths.get(bmsNode.rootPath(), anotherName);
       found = Files.exists(soundPath);
       if (found) {
